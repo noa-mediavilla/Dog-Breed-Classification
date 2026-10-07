@@ -1,0 +1,40 @@
+stages:
+  prepare:
+    cmd: python -m mates.modeling.prepare
+    deps:
+    - data/raw/labels.csv
+    - data/raw/test
+    - data/raw/train
+    - mates/modeling/prepare.py
+    params:
+    - prepare.is_train
+    - prepare.save_processed
+    - prepare.seed
+    - prepare.split_size
+    outs:
+    - data/processed/X_train.pkl
+    - data/processed/X_valid.pkl
+    - data/processed/output_shape.pkl
+    - data/processed/y_train.pkl
+    - data/processed/y_valid.pkl
+  train:
+    cmd: python -m mates.modeling.train
+    deps:
+    - data/processed/X_train.pkl
+    - data/processed/X_valid.pkl
+    - data/processed/output_shape.pkl
+    - data/processed/y_train.pkl
+    - data/processed/y_valid.pkl
+    - mates/modeling/train.py
+    params:
+    - train.experiment_name
+    - train.model_name
+    - train.model_url
+    - train.hyperparams
+    - train.monitor
+    - train.metrics
+    - train.patience
+    - train.save_model
+    outs:
+    - models/mobilenet_exp_batch_32.h5
+    - models/mobilenet_exp_batch_62.h5

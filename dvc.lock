@@ -1,0 +1,121 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python -m mates.modeling.prepare
+    deps:
+    - path: data/raw/labels.csv
+      hash: md5
+      md5: ebee41cd1271c6ea9d3b54f6dd8531ce
+      size: 482063
+      isexec: true
+    - path: data/raw/test
+      hash: md5
+      md5: 93e54535952a6b266546a86c00140112.dir
+      size: 363049350
+      nfiles: 10357
+    - path: data/raw/train
+      hash: md5
+      md5: 579bdd4abc67bb771a1b19f831387360.dir
+      size: 361700370
+      nfiles: 10222
+    - path: mates/modeling/prepare.py
+      hash: md5
+      md5: d9444af8b368dd2b1f7680111611a9d9
+      size: 3814
+      isexec: true
+    params:
+      params.yaml:
+        prepare.is_train: true
+        prepare.save_processed: true
+        prepare.seed: 42
+        prepare.split_size: 0.3
+    outs:
+    - path: data/processed/X_train.pkl
+      hash: md5
+      md5: 8b9390e68cae6319ce9ac1d2c3fe59c0
+      size: 529668
+      isexec: true
+    - path: data/processed/X_valid.pkl
+      hash: md5
+      md5: 774acd2dee202badac800c10ebbddae1
+      size: 227103
+      isexec: true
+    - path: data/processed/output_shape.pkl
+      hash: md5
+      md5: a23f97d662b4cf358458561f819839fe
+      size: 5
+      isexec: true
+    - path: data/processed/y_train.pkl
+      hash: md5
+      md5: cb88937c8de0e9daafe458746dfc9f77
+      size: 858762
+      isexec: true
+    - path: data/processed/y_valid.pkl
+      hash: md5
+      md5: e3dc06e769617b526db89a0c5b2d479a
+      size: 368202
+      isexec: true
+  train:
+    cmd: python -m mates.modeling.train
+    deps:
+    - path: data/processed/X_train.pkl
+      hash: md5
+      md5: 8b9390e68cae6319ce9ac1d2c3fe59c0
+      size: 529668
+      isexec: true
+    - path: data/processed/X_valid.pkl
+      hash: md5
+      md5: 774acd2dee202badac800c10ebbddae1
+      size: 227103
+      isexec: true
+    - path: data/processed/output_shape.pkl
+      hash: md5
+      md5: a23f97d662b4cf358458561f819839fe
+      size: 5
+      isexec: true
+    - path: data/processed/y_train.pkl
+      hash: md5
+      md5: cb88937c8de0e9daafe458746dfc9f77
+      size: 858762
+      isexec: true
+    - path: data/processed/y_valid.pkl
+      hash: md5
+      md5: e3dc06e769617b526db89a0c5b2d479a
+      size: 368202
+      isexec: true
+    - path: mates/modeling/train.py
+      hash: md5
+      md5: 2491a260ac4d2bc7c22cfc2d05fa02f5
+      size: 5688
+      isexec: true
+    params:
+      params.yaml:
+        train.experiment_name: exp_batch
+        train.hyperparams:
+          epochs:
+          - 6
+          batch_size:
+          - 32
+          - 62
+          optimizer:
+          - adamw
+        train.metrics:
+        - accuracy
+        train.model_name: mobilenet
+        train.model_url: 
+          https://www.kaggle.com/models/google/mobilenet-v2/TensorFlow2/130-224-feature-vector/2
+        train.monitor: accuracy
+        train.patience:
+        - 5
+        train.save_model: true
+    outs:
+    - path: models/mobilenet_exp_batch_32.h5
+      hash: md5
+      md5: d56d984a9389caece1236bcfa4502220
+      size: 17720056
+      isexec: true
+    - path: models/mobilenet_exp_batch_62.h5
+      hash: md5
+      md5: 52524a205793ec082b90a1359ae41d89
+      size: 17720056
+      isexec: true
